@@ -44,20 +44,25 @@ class FontFiles(object):
         current platform.
         """
 
+        font_dirs = []
+
         # Colon-separated list of paths for python-pptx to find fonts
         CUSTOM_DIRS_VAR_NAME = 'PYTHON_PPTX_FONT_DIRECTORY'
         custom_dirs = os.getenv(CUSTOM_DIRS_VAR_NAME)
 
-        if custom_dirs is not None:
-            return custom_dirs.split(':')
+        # Check it is not None, empty or whitespace
+        if custom_dirs and custom_dirs.strip():
+            font_dirs.extend(custom_dirs.split(':'))
 
         if sys.platform.startswith("darwin"):
-            return cls._os_x_font_directories()
-        if sys.platform.startswith("linux"):
-            return cls._linux_font_directories()
-        if sys.platform.startswith("win32"):
-            return cls._windows_font_directories()
-        raise OSError("unsupported operating system")
+            font_dirs.extend(cls._os_x_font_directories())
+        elif sys.platform.startswith("linux"):
+            font_dirs.extend(cls._linux_font_directories())
+        elif sys.platform.startswith("win32"):
+            font_dirs.extend(cls._windows_font_directories())
+        else:
+            raise OSError("unsupported operating system")
+        return font_dirs
 
     @classmethod
     def _iter_font_files_in(cls, directory):
