@@ -114,8 +114,8 @@ class TextFitter(tuple):
         predicate = self._fits_in_width_predicate(point_size)
         res = lines.find_max(predicate)
         if res is None:
-            # no line fits, so doesn't matter what the point size is i guess
-            return lines
+            # nothing fits, so return the whole line
+            return [line_source._text]
         else:
             text, remainder = res
         lines = [text]
