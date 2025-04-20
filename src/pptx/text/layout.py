@@ -109,7 +109,15 @@ class TextFitter(tuple):
         *line_source* wrapped within this fitter when rendered at
         *point_size*.
         """
-        text, remainder = self._break_line(line_source, point_size)
+
+        lines = _BinarySearchTree.from_ordered_sequence(line_source)
+        predicate = self._fits_in_width_predicate(point_size)
+        res = lines.find_max(predicate)
+        if res is None:
+            # no line fits, so doesn't matter what the point size is i guess
+            return lines
+        else:
+            text, remainder = res
         lines = [text]
         if remainder:
             lines.extend(self._wrap_lines(remainder, point_size))
